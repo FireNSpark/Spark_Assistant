@@ -1,4 +1,10 @@
-// main.js
-// Loaded from main.js placeholder - to be filled from canvas '18 - Main Init Entry'
+// main.js - Core controller for Spark base
 
-// Replace this placeholder with actual canvas content.
+// Load voice + memory
+import { speak } from './voice/speak.js';
+import { memory } from './memory/memery.js';
+
+// Mount basic interface
+window.onload = () => {
+  speak("Spark online. Voice link active.");
+};
