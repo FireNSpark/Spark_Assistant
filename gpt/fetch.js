@@ -1,4 +1,3 @@
-// fetch.js
 
 import { API_KEY } from "../apikey.js";
 
