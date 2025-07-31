@@ -1,7 +1,7 @@
+// 2 - Voice and Buttons (Fixed: No Repetition, GPT Connected)
+
 import { fetchOpenAIResponse } from "./gpt/fetch.js";
 import { API_KEY } from "../apikey.js";
-
-console.log("✅ VoiceAndButtons script loaded.");
 
 const synth = window.speechSynthesis;
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -23,18 +23,16 @@ async function handleSend() {
   const input = userInput.value.trim();
   if (!input) return;
 
-  console.log("📤 Sending to GPT:", input);
   appendMessage(input, true);
   userInput.value = "";
 
   try {
     const reply = await fetchOpenAIResponse(input);
-    console.log("📥 GPT replied:", reply);
     appendMessage(reply);
     speakText(reply);
   } catch (err) {
-    console.error("❌ GPT fetch failed:", err);
-    appendMessage("Error connecting to GPT.");
+    console.error("GPT Error:", err);
+    appendMessage("❌ Something went wrong talking to GPT.");
   }
 }
 
@@ -45,34 +43,32 @@ function speakText(text) {
 }
 
 function startListening() {
-  if (!SpeechRecognition) return alert("Speech recognition not supported");
+  if (!SpeechRecognition) {
+    alert("Speech recognition not supported in this browser.");
+    return;
+  }
 
   const recognition = new SpeechRecognition();
   recognition.lang = "en-US";
   recognition.interimResults = false;
 
-  recognition.onresult = async (event) => {
+  recognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript;
-    console.log("🎤 Heard:", transcript);
     userInput.value = transcript;
     handleSend();
   };
 
-  recognition.onerror = (err) => console.error("🎤 Mic error:", err);
+  recognition.onerror = (err) => {
+    console.error("🎙️ Mic error:", err);
+    appendMessage("⚠️ Mic error, try again.");
+  };
+
   recognition.start();
 }
 
-sendBtn?.addEventListener("click", () => {
-  console.log("📨 Send button clicked.");
-  handleSend();
-});
-speakBtn?.addEventListener("click", () => {
-  console.log("🎙️ Speak button clicked.");
-  startListening();
-});
+// 🔘 Button Listeners
+sendBtn?.addEventListener("click", handleSend);
+speakBtn?.addEventListener("click", startListening);
 userInput?.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    console.log("⏎ ENTER key pressed.");
-    handleSend();
-  }
+  if (e.key === "Enter") handleSend();
 });
