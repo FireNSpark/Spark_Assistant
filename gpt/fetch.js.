@@ -1,7 +1,7 @@
 // 2 - Voice and Buttons (Updated for GPT Integration)
 
 import { fetchOpenAIResponse } from "./gpt/fetch.js";
-
+import { API_KEY } from '../apikey.js';
 const synth = window.speechSynthesis;
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
