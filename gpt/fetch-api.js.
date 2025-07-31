@@ -24,3 +24,23 @@ export async function fetchOpenAI(prompt) {
     return '[ERROR: GPT fetch failed]';
   }
 }
+async function fetchOpenAIResponse(prompt) {
+  const apiKey = OPENAI_API_KEY;
+  const endpoint = "https://api.openai.com/v1/chat/completions";
+
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: "gpt-4",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7
+    })
+  });
+
+  const data = await response.json();
+  return data.choices?.[0]?.message?.content || "No response.";
+}
