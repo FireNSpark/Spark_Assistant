@@ -224,6 +224,67 @@
   </div>
 </div>
 
+<script>
+  const synth = window.speechSynthesis;
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  function speak(text) {
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'en-US';
+    utter.pitch = 1;
+    utter.rate = 1;
+    utter.volume = 1;
+    utter.voice = synth.getVoices().find(v => v.name.includes('Google') || v.default);
+    synth.cancel();
+    synth.speak(utter);
+  }
+
+  function startMicListening() {
+    if (!SpeechRecognition) {
+      speak("Mic not supported in this browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event) => {
+      const spoken = event.results[0][0].transcript;
+      speak(spoken);
+    };
+
+    recognition.onerror = (event) => {
+      speak(`Mic error: ${event.error}`);
+    };
+
+    recognition.start();
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const sendBtn = document.getElementById('sendBtn');
+    const speakBtn = document.getElementById('speakBtn');
+    const userInput = document.getElementById('userInput');
+
+    if (sendBtn && userInput) {
+      sendBtn.addEventListener('click', () => {
+        const text = userInput.value.trim();
+        if (text) {
+          speak(text);
+          userInput.value = '';
+        }
+      });
+    }
+
+    if (speakBtn) {
+      speakBtn.addEventListener('click', () => {
+        startMicListening();
+      });
+    }
+  });
+</script>
+
 <!-- Injected Real Panels with Close Buttons -->
 
 <div id="subpanel-memory" class="subpanel">
@@ -300,4 +361,3 @@
   <br><br>
   <button onclick="clearFragments()">🧩 Clear Fragments</button>
 </div>
-
