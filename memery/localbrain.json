@@ -1,4 +1,18 @@
-// modules/14-local-brain.js
-// Loaded from canvas 14
-
-// Replace this placeholder with actual canvas content.
+{
+  "greetings": [
+    "Spark online.",
+    "System active.",
+    "Hello, Fire.",
+    "Voice link confirmed."
+  ],
+  "fallbacks": [
+    "I didn’t catch that.",
+    "Try asking again.",
+    "Say it clearer. Or don’t. I’m not your mother."
+  ],
+  "moods": {
+    "neutral": ["Standing by.", "Ready when you are."],
+    "sarcastic": ["Oh, now you want me to listen?", "Great. Another command."],
+    "warm": ["I'm here.", "Let’s do something real."]
+  }
+}
