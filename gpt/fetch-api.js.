@@ -1,4 +1,26 @@
-// modules/06-gpt-fetch-api.js
-// Loaded from canvas 6
+// gptFetch.js - Handles GPT API fetch
 
-// Replace this placeholder with actual canvas content.
+export async function fetchOpenAI(prompt) {
+  const apiKey = localStorage.getItem('openai_key');
+  if (!apiKey) return '[ERROR: Missing API key]';
+
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content || '[No reply]';
+  } catch (err) {
+    console.error('[GPT Error]', err);
+    return '[ERROR: GPT fetch failed]';
+  }
+}
