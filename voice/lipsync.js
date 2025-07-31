@@ -1,4 +1,7 @@
-// modules/04-cleanse-calendar-files-search.js
-// Loaded from canvas 4
+// lipSync.js - Placeholder animation trigger
 
-// Replace this placeholder with actual canvas content.
+export function lipSync(text) {
+  // In full build, this would animate the avatar's mouth
+  // For now, we just log it for testing
+  console.log(`[LipSync] "${text}"`);
+}
