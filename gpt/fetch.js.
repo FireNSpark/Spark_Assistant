@@ -1,46 +1,80 @@
-// gptFetch.js - Handles GPT API fetch
+// 2 - Voice and Buttons (Updated for GPT Integration)
 
-export async function fetchOpenAI(prompt) {
-  const apiKey = localStorage.getItem('openai_key');
-  if (!apiKey) return '[ERROR: Missing API key]';
+import { fetchOpenAIResponse } from "./gpt/fetch.js";
 
-  try {
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-4',
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+const synth = window.speechSynthesis;
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-    const data = await res.json();
-    return data.choices?.[0]?.message?.content || '[No reply]';
-  } catch (err) {
-    console.error('[GPT Error]', err);
-    return '[ERROR: GPT fetch failed]';
+function speak(text) {
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-US';
+  utter.pitch = 1;
+  utter.rate = 1;
+  utter.volume = 1;
+  utter.voice = synth.getVoices().find(v => v.name.includes('Google') || v.default);
+  synth.cancel();
+  synth.speak(utter);
+}
+
+async function handleTextInput(text) {
+  if (!text) return;
+  const reply = await fetchOpenAIResponse(text);
+  speak(reply);
+  appendToChat('user', text);
+  appendToChat('bot', reply);
+}
+
+function startMicListening() {
+  if (!SpeechRecognition) {
+    speak("Mic not supported in this browser.");
+    return;
   }
-}
-async function fetchOpenAIResponse(prompt) {
-  const apiKey = OPENAI_API_KEY;
-  const endpoint = "https://api.openai.com/v1/chat/completions";
 
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`
-    },
-    body: JSON.stringify({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.7
-    })
-  });
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
 
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content || "No response.";
+  recognition.onresult = async (event) => {
+    const spoken = event.results[0][0].transcript;
+    await handleTextInput(spoken);
+  };
+
+  recognition.onerror = (event) => {
+    speak(`Mic error: ${event.error}`);
+  };
+
+  recognition.start();
 }
+
+function appendToChat(sender, message) {
+  const chatBox = document.getElementById('chatBox');
+  if (!chatBox) return;
+  const messageElem = document.createElement('div');
+  messageElem.className = sender === 'user' ? 'user-message' : 'bot-message';
+  messageElem.textContent = message;
+  chatBox.appendChild(messageElem);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const sendBtn = document.getElementById('sendBtn');
+  const speakBtn = document.getElementById('speakBtn');
+  const userInput = document.getElementById('userInput');
+
+  if (sendBtn && userInput) {
+    sendBtn.addEventListener('click', async () => {
+      const text = userInput.value.trim();
+      if (text) {
+        await handleTextInput(text);
+        userInput.value = '';
+      }
+    });
+  }
+
+  if (speakBtn) {
+    speakBtn.addEventListener('click', () => {
+      startMicListening();
+    });
+  }
+});
