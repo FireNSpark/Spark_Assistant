@@ -1,90 +1,26 @@
-// 2 - Voice and Buttons (Updated for GPT Integration)
+// fetch.js
 
+import { API_KEY } from "../apikey.js";
 
+export async function fetchOpenAIResponse(userMessage) {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: userMessage }],
+    }),
+  });
 
-const response = await fetch("https://api.openai.com/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${OPENAI_API_KEY}`,
-  },
-  ...
-});
-import { fetchOpenAIResponse } from "./gpt/fetch.js";
-import { API_KEY } from '../apikey.js';
-const synth = window.speechSynthesis;
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const data = await response.json();
 
-function speak(text) {
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'en-US';
-  utter.pitch = 1;
-  utter.rate = 1;
-  utter.volume = 1;
-  utter.voice = synth.getVoices().find(v => v.name.includes('Google') || v.default);
-  synth.cancel();
-  synth.speak(utter);
-}
-
-async function handleTextInput(text) {
-  if (!text) return;
-  const reply = await fetchOpenAIResponse(text);
-  speak(reply);
-  appendToChat('user', text);
-  appendToChat('bot', reply);
-}
-
-function startMicListening() {
-  if (!SpeechRecognition) {
-    speak("Mic not supported in this browser.");
-    return;
+  if (!response.ok) {
+    console.error("GPT Error:", data);
+    return "Sorry, something went wrong.";
   }
 
-  const recognition = new SpeechRecognition();
-  recognition.lang = 'en-US';
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-
-  recognition.onresult = async (event) => {
-    const spoken = event.results[0][0].transcript;
-    await handleTextInput(spoken);
-  };
-
-  recognition.onerror = (event) => {
-    speak(`Mic error: ${event.error}`);
-  };
-
-  recognition.start();
+  return data.choices?.[0]?.message?.content || "No response.";
 }
-
-function appendToChat(sender, message) {
-  const chatBox = document.getElementById('chatBox');
-  if (!chatBox) return;
-  const messageElem = document.createElement('div');
-  messageElem.className = sender === 'user' ? 'user-message' : 'bot-message';
-  messageElem.textContent = message;
-  chatBox.appendChild(messageElem);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-  const sendBtn = document.getElementById('sendBtn');
-  const speakBtn = document.getElementById('speakBtn');
-  const userInput = document.getElementById('userInput');
-
-  if (sendBtn && userInput) {
-    sendBtn.addEventListener('click', async () => {
-      const text = userInput.value.trim();
-      if (text) {
-        await handleTextInput(text);
-        userInput.value = '';
-      }
-    });
-  }
-
-  if (speakBtn) {
-    speakBtn.addEventListener('click', () => {
-      startMicListening();
-    });
-  }
-});
