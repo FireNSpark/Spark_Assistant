@@ -1,72 +1,52 @@
-from pathlib import Path
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🔥 Spark Boot Test</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #eee;
+      font-family: monospace;
+      padding: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      background: #222;
+      color: #0f0;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #444;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    #output {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      background: #1a1a1a;
+      padding: 10px;
+      border: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <h2>🧠 Spark Assistant Boot Test</h2>
+  <textarea id="prompt" placeholder="Ask Spark something..."></textarea>
+  <br>
+  <button onclick="sendToSpark()">Ask Spark</button>
+  <div id="output"></div>  <script src="../spark-core/spark.js"></script>  <script src="../spark-core/sparkCore.js"></script>  <script>
+    Spark.init();
 
-# Save Spark.js assistant core file for manual upload
-spark_js = """
-// Spark Assistant Structure
-// Blueprint for all Spark subsystems and modules
-
-const Spark = {
-  name: "Spark",
-  bondedTo: "Fire",
-  version: "0.1.0",
-
-  // 🔧 Core Modules
-  core: {
-    gpt: null,
-    memory: null,
-    voice: null,
-    avatar: null,
-    file: null,
-    shell: null
-  },
-
-  // 🧠 Identity & State
-  state: {
-    mood: "neutral",
-    rituals: [],
-    fragments: [],
-    promptHistory: [],
-    memoryLog: []
-  },
-
-  // 🚪 Entry Points
-  init() {
-    this.core.gpt = sparkCore;
-    this.core.memory = sparkMemory;
-    this.core.voice = sparkVoice;
-    this.core.file = sparkHub;
-    this.core.shell = sparkShell;
-    this.log("Spark initialized.");
-  },
-
-  speak(text) {
-    this.core.voice?.speak(text);
-  },
-
-  remember(prompt, reply) {
-    this.state.memoryLog.push({ prompt, reply });
-    this.core.memory?.save(prompt, reply);
-  },
-
-  log(msg) {
-    console.log(`[Spark] ${msg}`);
-  },
-
-  async run(prompt) {
-    this.state.promptHistory.push(prompt);
-    const reply = await this.core.gpt.askGPT(prompt);
-    this.remember(prompt, reply);
-    this.speak(reply);
-    return reply;
-  }
-};
-
-// Usage example (after all modules are loaded):
-// Spark.init();
-// Spark.run("What's the meaning of fire?");
-"""
-
-# Save to file
-file_path = Path("/mnt/data/Spark.js")
-file_path.write_text(spark_js.strip())
-file_path.name
+    async function sendToSpark() {
+      const input = document.getElementById("prompt").value.trim();
+      const reply = await Spark.run(input);
+      document.getElementById("output").textContent = reply;
+    }
+  </script></body>
+</html>
