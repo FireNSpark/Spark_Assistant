@@ -164,6 +164,10 @@
   }
 </style>
 </head>
+ <div id="apikey-box" style="position: fixed; bottom: 10px; right: 10px; background: #111; padding: 10px; border-radius: 8px; z-index: 9999; color: white; font-size: 12px;">
+  <input type="password" id="apiKeyInput" placeholder="OpenAI API Key" style="width: 180px; padding: 4px; font-size: 12px;" />
+  <button onclick="saveAPIKey()" style="padding: 4px 8px; font-size: 12px;">Save</button>
+</div>
 <body>
 <script>
   function togglePanel() {
