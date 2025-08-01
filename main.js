@@ -1,4 +1,6 @@
 // main.js
+
+// Save API Key to localStorage from input box
 function saveAPIKey() {
   const input = document.getElementById('apiKeyInput');
   if (!input) {
@@ -13,6 +15,10 @@ function saveAPIKey() {
   localStorage.setItem('openai_api_key', key);
   alert('API key saved! Please refresh the page.');
 }
+
+// Expose saveAPIKey globally so HTML onclick works
+window.saveAPIKey = saveAPIKey;
+
 // Add message to chat window
 export function addMessage(sender, text) {
   const chatBox = document.getElementById('chat-box');
@@ -31,23 +37,7 @@ export function speakText(text) {
   window.speechSynthesis.speak(utterance);
 }
 
-// Save API Key to localStorage from input box
-function saveAPIKey() {
-  const input = document.getElementById('apiKeyInput');
-  if (!input) {
-    alert('API key input not found');
-    return;
-  }
-  const key = input.value.trim();
-  if (!key) {
-    alert('Please enter a valid API key.');
-    return;
-  }
-  localStorage.setItem('openai_api_key', key);
-  alert('API key saved! Please refresh the page.');
-}
-
-// Voice toggle (example, depends on your existing voiceandbuttons.js)
+// Voice toggle (example)
 export function toggleVoice(enable) {
   if (enable) {
     // Enable voice features here
@@ -77,6 +67,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
-// Expose saveAPIKey globally so it can be called from inline HTML onclick
-window.saveAPIKey = saveAPIKey;
