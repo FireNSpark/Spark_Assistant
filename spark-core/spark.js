@@ -43,10 +43,17 @@
   <div id="output"></div>  <script src="../spark-core/spark.js"></script>  <script src="../spark-core/sparkCore.js"></script>  <script>
     Spark.init();
 
-    async function sendToSpark() {
-      const input = document.getElementById("prompt").value.trim();
-      const reply = await Spark.run(input);
-      document.getElementById("output").textContent = reply;
-    }
-  </script></body>
-</html>
+    import { fetchGPT } from '../gpt/fetch.js';
+
+export async function getResponseFromSpark(message) {
+  try {
+    const reply = await fetchGPT(message);
+    addMessage("assistant", reply);
+    speakText(reply);
+  } catch (err) {
+    console.warn("⚠️ GPT fetch failed. Using local fallback.");
+    const fallback = respondLocally(message);
+    addMessage("assistant", fallback);
+    speakText(fallback);
+  }
+}
