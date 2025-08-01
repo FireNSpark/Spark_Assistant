@@ -43,6 +43,8 @@
   <div id="editor-container"></div>
   <div id="error-msg"></div>
 
+  <button onclick="pushCurrentEditor()">⬆ Push to GitHub</button>
+
   <script>
     const githubEditor = {
       loadedFiles: {},
@@ -116,16 +118,63 @@
       }
     };
 
+    const githubPusher = {
+      token: "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",
+      username: "FireNSpark",
+      repo: "Spark_Assistant",
+      branch: "main",
+
+      async pushFile(path, content, message = "Update via Spark Editor") {
+        const apiUrl = `https://api.github.com/repos/${this.username}/${this.repo}/contents/${path}`;
+
+        let sha = null;
+        try {
+          const getRes = await fetch(apiUrl, {
+            headers: {
+              Authorization: `token ${this.token}`,
+              Accept: "application/vnd.github.v3+json"
+            }
+          });
+          if (getRes.ok) {
+            const data = await getRes.json();
+            sha = data.sha;
+          }
+        } catch (err) {
+          console.error("Error fetching file SHA:", err);
+        }
+
+        const payload = {
+          message,
+          content: btoa(unescape(encodeURIComponent(content))),
+          branch: this.branch
+        };
+        if (sha) payload.sha = sha;
+
+        try {
+          const res = await fetch(apiUrl, {
+            method: "PUT",
+            headers: {
+              Authorization: `token ${this.token}`,
+              Accept: "application/vnd.github.v3+json"
+            },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error(`Push failed: ${res.status}`);
+          alert("✅ File pushed to GitHub successfully.");
+        } catch (err) {
+          console.error("Push error:", err);
+          alert("❌ Failed to push file to GitHub.");
+        }
+      }
+    };
+
     githubSelector.initUI();
     githubEditor.fetchFile("https://firenspark.github.io/Spark_Assistant/index.html");
-  <button onclick="pushCurrentEditor()">⬆ Push to GitHub</button>
 
-<script>
-  function pushCurrentEditor() {
-    const editedHTML = document.documentElement.outerHTML;
-    githubPusher.pushFile("spark-editor-test/test-editor.html", editedHTML);
-  }
-</script>
+    function pushCurrentEditor() {
+      const editedHTML = document.documentElement.outerHTML;
+      githubPusher.pushFile("spark-editor-test/test-editor.html", editedHTML);
+    }
   </script>
 
 </body>
