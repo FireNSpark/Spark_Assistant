@@ -1,19 +1,23 @@
 // main.js
 
-// Save API Key to localStorage from input box
+// Save API Key to localStorage from input box and hide input box after saving
 function saveAPIKey() {
-  const input = document.getElementById('apiKeyInput');
-  if (!input) {
+  const inputBox = document.getElementById('apiKeyInput');
+  const apiBox = document.getElementById('apikey-box');
+  if (!inputBox) {
     alert('API key input not found');
     return;
   }
-  const key = input.value.trim();
+  const key = inputBox.value.trim();
   if (!key) {
     alert('Please enter a valid API key.');
     return;
   }
   localStorage.setItem('openai_api_key', key);
   alert('API key saved! Please refresh the page.');
+  if (apiBox) {
+    apiBox.style.display = 'none';  // Hide the box
+  }
 }
 
 // Expose saveAPIKey globally so HTML onclick works
@@ -37,7 +41,7 @@ export function speakText(text) {
   window.speechSynthesis.speak(utterance);
 }
 
-// Voice toggle (example)
+// Voice toggle (example, depends on your existing voiceandbuttons.js)
 export function toggleVoice(enable) {
   if (enable) {
     // Enable voice features here
