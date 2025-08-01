@@ -1,4 +1,4 @@
-function openGitEditor() {
+function opengiteditor() {
   const repo = prompt("GitHub repo:", "FireNSpark/Spark_Assistant");
   const path = prompt("File path:", "memery/memery.js");
   const token = prompt("Paste GitHub token:");
