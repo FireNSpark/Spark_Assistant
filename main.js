@@ -1,5 +1,18 @@
 // main.js
-
+function saveAPIKey() {
+  const input = document.getElementById('apiKeyInput');
+  if (!input) {
+    alert('API key input not found');
+    return;
+  }
+  const key = input.value.trim();
+  if (!key) {
+    alert('Please enter a valid API key.');
+    return;
+  }
+  localStorage.setItem('openai_api_key', key);
+  alert('API key saved! Please refresh the page.');
+}
 // Add message to chat window
 export function addMessage(sender, text) {
   const chatBox = document.getElementById('chat-box');
