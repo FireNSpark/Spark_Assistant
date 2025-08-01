@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🔥 Spark File Loader</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #eee;
+      font-family: monospace;
+      padding: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 500px;
+      background: #1e1e1e;
+      color: #00ff99;
+      border: 1px solid #444;
+      padding: 10px;
+      font-size: 14px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🔥 Spark File Loader</h2>
+  <p>Loading <code>spark-core/spark.js</code> directly from GitHub Pages:</p>
+  <textarea id="editor">// Loading...</textarea>
+  <button onclick="pushEdits()">Push to GitHub</button>
+
+  <script>
+    const filePath = "spark-core/spark.js";
+    const rawUrl = "https://firenspark.github.io/Spark_Assistant/" + filePath;
+
+    fetch(rawUrl)
+      .then(res => {
+        if (!res.ok) throw new Error(res.status);
+        return res.text();
+      })
+      .then(text => {
+        document.getElementById("editor").value = text;
+      })
+      .catch(err => {
+        document.getElementById("editor").value = "// Failed to load: " + err;
+      });
+
+    function pushEdits() {
+      alert("This button would push to GitHub. Wiring it next.");
+    }
+  </script>
+
+</body>
+</html>
