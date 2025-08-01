@@ -1,7 +1,3 @@
-from pathlib import Path
-
-# Updated version that fetches from the user's GitHub Pages (not raw GitHub) to avoid CORS
-updated_html = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,9 +61,3 @@ updated_html = """
 
 </body>
 </html>
-"""
-
-# Save the updated HTML file
-file_path = Path("/mnt/data/test-editor-corsfree.html")
-file_path.write_text(updated_html.strip())
-file_path.name
