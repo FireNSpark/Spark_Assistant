@@ -118,6 +118,14 @@
 
     githubSelector.initUI();
     githubEditor.fetchFile("https://firenspark.github.io/Spark_Assistant/index.html");
+  <button onclick="pushCurrentEditor()">⬆ Push to GitHub</button>
+
+<script>
+  function pushCurrentEditor() {
+    const editedHTML = document.documentElement.outerHTML;
+    githubPusher.pushFile("spark-editor-test/test-editor.html", editedHTML);
+  }
+</script>
   </script>
 
 </body>
