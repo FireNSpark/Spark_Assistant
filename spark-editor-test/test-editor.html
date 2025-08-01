@@ -44,11 +44,9 @@
   <div id="error-msg"></div>
 
   <button onclick="pushCurrentEditor()">⬆ Push to GitHub</button>
-
   <script>
     const githubEditor = {
       loadedFiles: {},
-
       async fetchFile(rawUrl) {
         try {
           const res = await fetch(rawUrl);
@@ -63,7 +61,6 @@
           if (errBox) errBox.textContent = "Fetch failed: " + err.message;
         }
       },
-
       renderEditor(filename) {
         const container = document.getElementById("editor-container") || this.createEditorContainer();
         container.innerHTML = `
@@ -72,19 +69,16 @@
           <button onclick="githubEditor.saveEdits('${filename}')">Save</button>
         `;
       },
-
       saveEdits(filename) {
         const editedText = document.getElementById("editor").value;
         this.loadedFiles[filename] = editedText;
-        alert(`Saved changes to ${filename} locally.`);
+        alert(\`Saved changes to \${filename} locally.\`);
       },
-
       escapeHTML(str) {
         return str.replace(/&/g, "&amp;")
                   .replace(/</g, "&lt;")
                   .replace(/>/g, "&gt;");
       },
-
       createEditorContainer() {
         const container = document.createElement("div");
         container.id = "editor-container";
@@ -92,7 +86,6 @@
         return container;
       }
     };
-
     const githubSelector = {
       initUI() {
         const container = document.getElementById("selector-container") || this.createSelectorContainer();
@@ -101,14 +94,12 @@
           <button onclick="githubSelector.loadFile()">Load File</button>
         `;
       },
-
       loadFile() {
         const path = document.getElementById("filePath").value.trim();
         if (!path) return alert("Enter a file path.");
         const url = "https://firenspark.github.io/Spark_Assistant/" + path;
         githubEditor.fetchFile(url);
       },
-
       createSelectorContainer() {
         const container = document.createElement("div");
         container.id = "selector-container";
@@ -123,10 +114,8 @@
       username: "FireNSpark",
       repo: "Spark_Assistant",
       branch: "main",
-
       async pushFile(path, content, message = "Update via Spark Editor") {
         const apiUrl = `https://api.github.com/repos/${this.username}/${this.repo}/contents/${path}`;
-
         let sha = null;
         try {
           const getRes = await fetch(apiUrl, {
@@ -142,7 +131,6 @@
         } catch (err) {
           console.error("Error fetching file SHA:", err);
         }
-
         const payload = {
           message,
           content: btoa(unescape(encodeURIComponent(content))),
@@ -176,6 +164,5 @@
       githubPusher.pushFile("spark-editor-test/test-editor.html", editedHTML);
     }
   </script>
-
 </body>
 </html>
