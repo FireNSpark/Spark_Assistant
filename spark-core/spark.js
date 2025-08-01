@@ -44,6 +44,8 @@
     Spark.init();
 
 import { fetchGPT } from '../gpt/fetch.js';
+import { addMessage, speakText } from '../main.js';
+import { respondLocally } from '../memery/memery.js';
 
 export async function getResponseFromSpark(message) {
   try {
