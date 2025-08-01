@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GitHub File Editor (All-in-One)</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #eee;
+      font-family: monospace;
+      padding: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 400px;
+      background: #1e1e1e;
+      color: #00ff99;
+      border: 1px solid #444;
+      padding: 10px;
+      font-size: 14px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #555;
+    }
+    #error-msg {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🔥 GitHub Live File Editor</h2>
+  <div id="selector-container"></div>
+  <div id="editor-container"></div>
+  <div id="error-msg"></div>
+
+  <script>
+    const githubEditor = {
+      loadedFiles: {},
+
+      async fetchFile(rawUrl) {
+        try {
+          const res = await fetch(rawUrl);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const text = await res.text();
+          const filename = rawUrl.split("/").pop();
+          this.loadedFiles[filename] = text;
+          this.renderEditor(filename);
+        } catch (err) {
+          console.error("Fetch failed:", err);
+          const errBox = document.getElementById("error-msg");
+          if (errBox) errBox.textContent = "Fetch failed: " + err.message;
+        }
+      },
+
+      renderEditor(filename) {
+        const container = document.getElementById("editor-container") || this.createEditorContainer();
+        container.innerHTML = `
+          <h3>${filename}</h3>
+          <textarea id="editor">${this.escapeHTML(this.loadedFiles[filename])}</textarea>
+          <button onclick="githubEditor.saveEdits('${filename}')">Save</button>
+        `;
+      },
+
+      saveEdits(filename) {
+        const editedText = document.getElementById("editor").value;
+        this.loadedFiles[filename] = editedText;
+        alert(`Saved changes to ${filename} locally.`);
+      },
+
+      escapeHTML(str) {
+        return str.replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;");
+      },
+
+      createEditorContainer() {
+        const container = document.createElement("div");
+        container.id = "editor-container";
+        document.body.appendChild(container);
+        return container;
+      }
+    };
+
+    const githubSelector = {
+      initUI() {
+        const container = document.getElementById("selector-container") || this.createSelectorContainer();
+        container.innerHTML = `
+          <input id="filePath" type="text" placeholder="Enter file path (e.g. main.js)" style="width:300px;padding:5px;">
+          <button onclick="githubSelector.loadFile()">Load File</button>
+        `;
+      },
+
+      loadFile() {
+        const path = document.getElementById("filePath").value.trim();
+        if (!path) return alert("Enter a file path.");
+        const url = "https://firenspark.github.io/Spark_Assistant/" + path;
+        githubEditor.fetchFile(url);
+      },
+
+      createSelectorContainer() {
+        const container = document.createElement("div");
+        container.id = "selector-container";
+        container.style.marginBottom = "20px";
+        document.body.insertBefore(container, document.body.firstChild);
+        return container;
+      }
+    };
+
+    githubSelector.initUI();
+    githubEditor.fetchFile("https://firenspark.github.io/Spark_Assistant/index.html");
+  </script>
+
+</body>
+</html>
