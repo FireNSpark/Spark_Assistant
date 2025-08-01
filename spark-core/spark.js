@@ -43,7 +43,7 @@
   <div id="output"></div>  <script src="../spark-core/spark.js"></script>  <script src="../spark-core/sparkCore.js"></script>  <script>
     Spark.init();
 
-    import { fetchGPT } from '../gpt/fetch.js';
+import { fetchGPT } from '../gpt/fetch.js';
 
 export async function getResponseFromSpark(message) {
   try {
