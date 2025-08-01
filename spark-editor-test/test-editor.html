@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>GitHub File Editor</title>
+  <title>GitHub File Editor (Mobile Friendly)</title>
   <style>
     body {
       background-color: #121212;
@@ -30,23 +30,35 @@
     button:hover {
       background: #555;
     }
+    #error-msg {
+      color: red;
+      margin-top: 10px;
+    }
   </style>
 
-  <!-- Option 1: Use local file (preferred to avoid CORS issues) -->
-<script src="spark-editor-test/Githubeditor.js"></script>
-
-  <!-- Option 2: Use raw GitHub file (may fail due to browser restrictions) -->
-  <!-- <script src="https://raw.githubusercontent.com/FireNSpark/Spark_Assistant/main/Githubeditor.js"></script> -->
+  <script src="githubeditor.js"></script>
+  <script src="githubselector.js"></script>
 </head>
 <body>
 
   <h2>🔥 GitHub Live File Editor</h2>
+  <div id="selector-container"></div>
   <div id="editor-container"></div>
+  <div id="error-msg"></div>
 
   <script>
-    // Replace with any file you want to fetch/edit
-    githubEditor.fetchFile("https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/FireNSpark/Spark_Assistant/main/index.html");
-<script src="spark-editor-test/githubSelector.js"></script>
+    const proxyURL = "https://cors-anywhere.herokuapp.com/";
+    const fileURL = "https://raw.githubusercontent.com/FireNSpark/Spark_Assistant/main/index.html";
+
+    githubEditor.fetchFile(proxyURL + fileURL)
+      .catch(err => {
+        const errBox = document.getElementById("error-msg");
+        errBox.textContent = "Fetch failed: " + err.message;
+        console.error("Fetch error:", err);
+      });
+
+    githubSelector.initUI();
+  </script>
+
 </body>
 </html>
-
